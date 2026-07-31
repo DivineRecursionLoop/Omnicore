@@ -1,124 +1,47 @@
-# OmniCore Framework
+OmniCore Framework
+OmniCore is a lightweight, modular Python framework designed to bring order to multi-source network reconnaissance. Instead of leaving you with fragmented output files and disconnected scripts, OmniCore centralizes your data into a thread-safe local SQLite workspace and translates it into actionable, interactive visualizations.
 
-OmniCore is a lightweight, modular Python framework for offline network reconnaissance and data structuring. It is not an exploitation framework; rather, it acts as a localized database wrapper to bring order, persistence, and visual clarity to standard reconnaissance tasks.
+The Core Concept
+Centralized Persistence (workspace.py): Routes all module outputs, target states, and recon data through a strict SQLite schema, eliminating messy text logs and maintaining a persistent local session.
 
-Because it operates entirely without cloud dependencies, it is highly suited for air-gapped environments or integration into custom physical hardware loadouts.
+Relationship & Topology Visualization (graph_exporter.py): Transforms the raw structured data stored in your workspace into interactive node graphs, allowing you to visually map network relationships, attack paths, and surface changes rather than parsing endless text.
 
----
+Modular Recon Modules (modules/): Houses standalone scripts for multi-threaded port scanning, banner correlation, service auditing, privilege escalation pathfinding, and historical drift detection.
 
-## What It Actually Does
+Automated Workflows (workflow.txt): Supports line-by-line script playbooks via the interactive shell to automate multi-step collection tasks.
 
-* **Centralized Data Structuring**: The core of the project. All module outputs are routed through a thread-safe SQLite database with a strict schema (`workspace.py`). This prevents messy text outputs and keeps session data permanently organized.
+Framework Architecture & Structure
+Plaintext
+omnicore/
+├── omnicore.py              # Interactive CLI shell & framework core
+├── base_module.py           # Standardized abstract class for module options & JSON reporting
+├── workspace.py             # Thread-safe SQLite database backend & schema manager
+├── workflow.txt             # Automated command playbook
+└── modules/
+    ├── attack_surface_drift_detector.py  # Isolates new/closed ports and risk shifts
+    ├── bundle_export.py                  # Packages workspace data for transport
+    ├── credential_reuse_mapper.py        # Cross-references service banners against risk signatures
+    ├── graph_exporter.py                 # Exports workspace data into visual node maps
+    ├── http_auditor.py                   # Audits web service endpoints
+    ├── mock_generator.py                 # Generates test data for workspace validation
+    ├── port_scanner.py                   # Multi-threaded TCP port scanner with TLS/HTTP banner grabbing
+    ├── privilege_escalation_pathfinder.py# Models host topologies into local pivot paths
+    └── snapshot_diff.py                  # Computes quantitative risk deltas against baselines
+Usage & Command Reference
+1. Launching the Framework
+Start the interactive CLI shell:
 
-
-* **Offline Visualization**: Translates the SQLite workspace into an interactive HTML node graph to easily visualize network topology, choke points, and surface changes offline (`graph_exporter.py`).
-
-
-* **Target Mapping**: Executes multi-threaded TCP port scanning with basic HTTP/TLS banner grabbing to populate the database (`port_scanner.py`).
-
-
-* **Drift Tracking**: Compares the current workspace state against historical baseline snapshots to track which ports have opened or closed over time (`snapshot_diff.py`).
-
-
-* **Custom Ingestion Ready**: The offline SQLite backend makes it simple to feed external data into the workspace. For example, it can easily be modified to ingest and correlate passively captured network handshakes logged directly to a local SD card module.
-
----
-
-## Instructions & Usage
-
-### 1. Launch the Framework
-
-Ensure the required dependencies (`colorama`, `requests`) are installed locally, then launch the interactive shell:
-
-```bash
+Bash
 python3 omnicore.py
-
-```
-
-### 2. Command Reference
-
-| Command | Action |
-| --- | --- |
-| `list` | Display all available modules
-
- |
-| `use <module>` | Select a specific module for execution
-
- |
-| `show options` | View configurable parameters for the active module
-
- |
-| `set <opt> <val>` | Configure a parameter (e.g., `set TARGET 192.168.1.50`)
-
- |
-| `run` | Execute the currently selected module
-
- |
-| `workspace status` | View database metrics for tracked targets and services
-
- |
-| `workspace services` | List all discovered services currently recorded in the SQLite database
-
- |
-| `playbook <file>` | Execute an automated, line-by-line workflow script
-
- |
-| `back` | Deselect the module and return to the main root shell
-
- |
-| `exit` | Shutdown the framework and database connection safely
-
- |
-
-* **Hardware Integration Ready**: The localized, offline SQLite structure makes it an ideal engine for custom physical kits—perfect for ingesting external offline data, such as parsing passively captured network handshakes logged locally to an SD card.
-* **Playbook Automation**: Supports native, line-by-line workflow execution via text-based scripts, allowing operators to chain complex multi-module assessments automatically without manual shell interaction.
-
-
-
----
-
-## Operational Instructions
-
-### 1. Launch the Framework
-
-OmniCore requires `colorama` and `requests`. Ensure these are installed in your local environment, then launch the interactive shell:
-
-```bash
-python3 omnicore.py
-
-```
-
-### 2. Command Reference
-
-| Command | Action |
-| --- | --- |
-| `list` | Display all loaded tactical modules
-
- |
-| `use <module>` | Select a specific module for execution
-
- |
-| `show options` | View configurable parameters for the active module
-
- |
-| `set <opt> <val>` | Configure a target or parameter (e.g., `set TARGET 192.168.1.5`)
-
- |
-| `run` | Execute the currently selected module
-
- |
-| `workspace status` | View database metrics (tracked targets, services, findings)
-
- |
-| `workspace services` | List all discovered services currently recorded in the SQLite database
-
- |
-| `playbook <file>` | Execute an automated, line-by-line workflow script
-
- |
-| `back` | Deselect the module and return to the main root shell
-
- |
-| `exit` | Safely spin down the framework and terminate the session
-
- |
+2. Interactive Shell Commands
+Command	Action
+list	Display all available module scripts currently loaded
+use <module>	Select a specific module script to work with
+show options	View configuration options for the active module
+set <opt> <val>	Configure a parameter for the active module
+run	Execute the currently selected module script
+workspace status	View database metrics for tracked targets, services, and findings
+workspace services	List all discovered services recorded in the database
+playbook <file>	Execute an automated, line-by-line workflow script file
+back	Deselect the current module and return to the root shell
+exit	Safely shutdown the framework and database connection
