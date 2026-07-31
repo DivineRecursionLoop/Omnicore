@@ -1,0 +1,27 @@
+# ==========================================
+# OmniCore Full Reconnaissance & Audit Pipeline
+# ==========================================
+
+# 1. Discover active open ports and sync banners to database
+use port_scanner
+set TARGET 127.0.0.1
+set PORTS 21,22,80,443,3306,8080
+run
+
+# 2. Audit discovered web endpoints for security headers
+use http_auditor
+set TARGET AUTO
+run
+
+# 3. Map software signatures to default credentials and risk profiles
+use credential_reuse_mapper
+set TARGET_IP AUTO
+run
+
+# 4. Model host topologies into local and lateral pivot pathways
+use privilege_escalation_pathfinder
+set TARGET_IP AUTO
+run
+
+# 5. Review the final database workspace summary
+workspace status
