@@ -1,184 +1,124 @@
 # OmniCore Framework
 
-> A modular, lightweight automation and reconnaissance framework built in Python.
+OmniCore is a lightweight, modular Python framework for offline network reconnaissance and data structuring. It is not an exploitation framework; rather, it acts as a localized database wrapper to bring order, persistence, and visual clarity to standard reconnaissance tasks.
+
+Because it operates entirely without cloud dependencies, it is highly suited for air-gapped environments or integration into custom physical hardware loadouts.
 
 ---
 
-## Overview
+## What It Actually Does
 
-**OmniCore** is a modular, scriptable assessment framework designed for reliability, concurrency safety, and extensibility. Moving away from monolithic scripts, OmniCore provides a centralized command shell (`omnicore.py`), a thread-safe SQLite workspace backend (`workspace.py`), and a strict plugin architecture (`base_module.py`) to manage and correlate intelligence across multiple network protocols.
-
----
-
-## Core Architecture
-
-OmniCore enforces strict architectural separation to ensure stability and seamless component management:
-
-* **Centralized Shell (`omnicore.py`)**: Built on Python's native `cmd` module, providing an interactive command-line interface with native playbook scripting support.
+* **Centralized Data Structuring**: The core of the project. All module outputs are routed through a thread-safe SQLite database with a strict schema (`workspace.py`). This prevents messy text outputs and keeps session data permanently organized.
 
 
-* **Thread-Safe Workspace (`workspace.py`)**: Manages a centralized SQLite database (housed safely in `~/.omnicore/omnicore_workspace.db`) with built-in thread locking to prevent race conditions during concurrent module execution.
+* **Offline Visualization**: Translates the SQLite workspace into an interactive HTML node graph to easily visualize network topology, choke points, and surface changes offline (`graph_exporter.py`).
 
 
-* **Immutable API Contract (`base_module.py`)**: Serves as the base class blueprint for all plug-and-play modules, standardizing option parsing, workspace data queries, and JSON report generation.
+* **Target Mapping**: Executes multi-threaded TCP port scanning with basic HTTP/TLS banner grabbing to populate the database (`port_scanner.py`).
 
 
+* **Drift Tracking**: Compares the current workspace state against historical baseline snapshots to track which ports have opened or closed over time (`snapshot_diff.py`).
+
+
+* **Custom Ingestion Ready**: The offline SQLite backend makes it simple to feed external data into the workspace. For example, it can easily be modified to ingest and correlate passively captured network handshakes logged directly to a local SD card module.
 
 ---
 
-## Framework File Structure
+## Instructions & Usage
 
-```text
-omnicore/
-│
-├── omnicore.py            # Main command shell and playbook runner
-├── base_module.py         # Standard plugin blueprint and workspace binder
-├── workspace.py           # Thread-safe SQLite workspace manager
-├── workflow.txt           # Example automated pipeline script
-│
-└── modules/               # Modular plugin directory
-    ├── __init__.py        # Python package initializer (leave blank)
-    ├── port_scanner.py               # Maps target ports and logs services[cite: 8]
-    ├── http_auditor.py               # Audits web endpoints for security headers[cite: 7]
-    ├── credential_reuse_mapper.py    # Matches banners against risk signatures[cite: 6]
-    ├── privilege_escalation_pathfinder.py # Models host topologies into attack chains[cite: 9]
-    └── attack_surface_drift_detector.py   # Computes delta drift against historical baselines[cite: 5]
+### 1. Launch the Framework
 
-```
-
----
-
-## Installation & Setup
-
-1. **Clone or download the repository** into your local environment:
-
-```bash
-git clone https://github.com/DivineRecursionLoop/omnicore.git
-cd omnicore
-
-```
-
-2. **Ensure dependencies are met**:
-The framework features an automated dependency bootstrap (`colorama`, `requests`) on its first run, but you can also install thcoloramaally:
-
-
-
-```bash
-pip install colorama requests
-
-```
-
-3. **Launch the Framework**:
+Ensure the required dependencies (`colorama`, `requests`) are installed locally, then launch the interactive shell:
 
 ```bash
 python3 omnicore.py
 
 ```
 
+### 2. Command Reference
+
+| Command | Action |
+| --- | --- |
+| `list` | Display all available modules
+
+ |
+| `use <module>` | Select a specific module for execution
+
+ |
+| `show options` | View configurable parameters for the active module
+
+ |
+| `set <opt> <val>` | Configure a parameter (e.g., `set TARGET 192.168.1.50`)
+
+ |
+| `run` | Execute the currently selected module
+
+ |
+| `workspace status` | View database metrics for tracked targets and services
+
+ |
+| `workspace services` | List all discovered services currently recorded in the SQLite database
+
+ |
+| `playbook <file>` | Execute an automated, line-by-line workflow script
+
+ |
+| `back` | Deselect the module and return to the main root shell
+
+ |
+| `exit` | Shutdown the framework and database connection safely
+
+ |
+
+* **Hardware Integration Ready**: The localized, offline SQLite structure makes it an ideal engine for custom physical kits—perfect for ingesting external offline data, such as parsing passively captured network handshakes logged locally to an SD card.
+* **Playbook Automation**: Supports native, line-by-line workflow execution via text-based scripts, allowing operators to chain complex multi-module assessments automatically without manual shell interaction.
+
+
+
 ---
 
-## Interactive Usage & Commands
+## Operational Instructions
 
-Once inside the `omnicore >` prompt, use the following commands to navigate and execute modules:
+### 1. Launch the Framework
 
-| Command | Description | Example |
-| --- | --- | --- |
-| `list` | List all available modules currently loaded in `modules/`<br> | `list` |
-| `use <module>` | Select a specific module script to configure
-
- | `use port_scanner` |
-| `show options` | Display configurable variables for the active module | `show options` |
-| `set <opt> <val>` | Set a configuration parameter for the active module
-
- | `set TARGET 127.0.0.1` |
-| `run` | Execute the selected module
-
- | `run` |
-| `workspace status` | Display summary counts of targets, services, and findings
-
- | `workspace status` |
-| `workspace services` | Print all discovered services currently tracked in the database
-
- | `workspace services` |
-| `playbook <file>` | Execute an automated text sequence of commands line-by-line
-
- | `playbook workflow.txt` |
-| `back` | Deselect the active module and return to the main shell
-
- | `back` |
-| `exit` | Shutdown the framework safely
-
- | `exit` |
-
----
-
-## Playbook Automation
-
-OmniCore supports native resource scripts (playbooks) to chain multi-stage workflows automatically.
-
-Create a text file named `workflow.txt`:
-
-```text
-# Automated OmniCore Pipeline
-use port_scanner
-set TARGET 127.0.0.1
-set PORTS 22,80,443,3306
-run
-
-use http_auditor
-set TARGET AUTO
-run
-
-use privilege_escalation_pathfinder
-set TARGET_IP AUTO
-run
-
-workspace status
-
-```
-
-Then execute the entire pipeline inside the shell with a single command:
+OmniCore requires `colorama` and `requests`. Ensure these are installed in your local environment, then launch the interactive shell:
 
 ```bash
-omnicore > playbook workflow.txt
+python3 omnicore.py
 
 ```
 
----
+### 2. Command Reference
 
-## Writing Custom Modules
+| Command | Action |
+| --- | --- |
+| `list` | Display all loaded tactical modules
 
-Adding a new capability to OmniCore is straightforward. Create a new `.py` file inside the `modules/` directory inheriting from `BaseModule`:
+ |
+| `use <module>` | Select a specific module for execution
 
-```python
-from base_module import BaseModule
+ |
+| `show options` | View configurable parameters for the active module
 
-class ModuleDefinition(BaseModule):
-    name = "example_module"
-    description = "Performs custom research task."
+ |
+| `set <opt> <val>` | Configure a target or parameter (e.g., `set TARGET 192.168.1.5`)
 
-    def __init__(self):
-        super().__init__()
-        self.options = {
-            "TARGET": {
-                "value": "127.0.0.1",
-                "required": True,
-                "description": "Target IP or hostname"
-            }
-        }
+ |
+| `run` | Execute the currently selected module
 
-    def run(self):
-        target = self.options["TARGET"]["value"]
-        print(f"[*] Executing custom module against {target}...")
-        
-        # Interact with the shared SQLite workspace safely
-        services = self.workspace.get_services()
-        print(f"[*] Found {len(services)} services in shared workspace database.")
+ |
+| `workspace status` | View database metrics (tracked targets, services, findings)
 
-```
+ |
+| `workspace services` | List all discovered services currently recorded in the SQLite database
 
----
+ |
+| `playbook <file>` | Execute an automated, line-by-line workflow script
 
-## License
+ |
+| `back` | Deselect the module and return to the main root shell
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+ |
+| `exit` | Safely spin down the framework and terminate the session
+
+ |
