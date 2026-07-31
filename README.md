@@ -53,7 +53,7 @@ omnicore/
 1. **Clone or download the repository** into your local environment:
 
 ```bash
-git clone https://github.com/automated/omnicore.git
+git clone https://github.com/DivineRecursionLoop/omnicore.git
 cd omnicore
 
 ```
