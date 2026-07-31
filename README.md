@@ -53,13 +53,13 @@ omnicore/
 1. **Clone or download the repository** into your local environment:
 
 ```bash
-git clone https://github.com/yourusername/omnicore.git
+git clone https://github.com/automated/omnicore.git
 cd omnicore
 
 ```
 
 2. **Ensure dependencies are met**:
-The framework features an automated dependency bootstrap (`colorama`, `requests`) on its first run, but you can also install them manually:
+The framework features an automated dependency bootstrap (`colorama`, `requests`) on its first run, but you can also install thcoloramaally:
 
 
 
