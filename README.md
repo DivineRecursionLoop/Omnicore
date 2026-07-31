@@ -1,4 +1,4 @@
-OmniCore Framework
+##OmniCore Framework
 OmniCore is a lightweight, modular Python framework designed to bring order to multi-source network reconnaissance. Instead of leaving you with fragmented output files and disconnected scripts, OmniCore centralizes your data into a thread-safe local SQLite workspace and translates it into actionable, interactive visualizations.
 
 The Core Concept
