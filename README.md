@@ -1,5 +1,7 @@
 # OmniCore Framework
 
+do not mess with this if you do not know how to program because not everything is fixed yet not everything is secure yet not everything functions properly yet and it's only going to get more complex because I haven't even implemented everything that I want to do in this tool 
+
 **OmniCore is a lightweight, modular Python framework designed to centralize multi-source network reconnaissance data into a thread-safe SQLite workspace and translate it into actionable, interactive visualizations.**
 
 ---
